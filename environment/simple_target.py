@@ -134,7 +134,7 @@ class SimpleTarget(Environment):
             if self.a_right_eye == '+' or self.a_right_eye == '*' or self.a_right_eye == 'x':
                 new_state = 'o'
             else:
-                new_state = ' '
+                new_state = '-'
 
         self.a_right_eye = new_state
         return new_state
@@ -191,7 +191,7 @@ class SimpleTarget(Environment):
             if self.a_right_eye == '+' or self.a_right_eye == '*' or self.a_right_eye == 'x':
                 new_state = 'o'
             else:
-                new_state = ' '
+                new_state = '-'
 
         self.a_left_eye = new_state
         return new_state
