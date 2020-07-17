@@ -14,9 +14,13 @@ class Interface(object):
         em seguida deve retornar a interação realmente executada (enacted)
         esta pode ou não ser igual à intencionada
         """
-        enacted_interaction = None
         result = None
 
+        # intended_interaction.label[0]
+        # label[0], ou seja, ^ > v, são as "primitive actions"
+        # o restante da label é o "primitive feedback"
+        # queremos executar uma primitive action no ambiente e receber um primitive feedback
+        # e então juntá-las em uma única interação para comparar com o planejado
         act = intended_interaction.label[0]
 
         if act == '>':
