@@ -70,6 +70,7 @@ class Memory:
         sum_valence += label.count('v') * 0
         sum_valence += label.count('.') * 0
         sum_valence += label.count('w') * (-5)
+        sum_valence += label.count('-') * 0
         sum_valence += label.count('*') * 15
         sum_valence += label.count('+') * 10
         sum_valence += label.count('x') * 15

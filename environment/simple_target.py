@@ -46,10 +46,6 @@ class SimpleTarget(Environment):
         self.a_right_eye = ' '
         self.a_left_eye = ' '
 
-        # food
-        self.food_reached = True
-        self.food_x, self.food_y = self.food_position()
-
         # board
         self.WIDTH = 8
         self.HEIGHT = 8
@@ -64,6 +60,11 @@ class SimpleTarget(Environment):
             ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
         ]
 
+        # food
+        self.food_reached = False
+        self.food_x, self.food_y = self.food_position()
+        self.board[self.food_y][self.food_x] = 'f'
+
     def food_position(self):
         x_set = list(set([i for i in range(1, 6)]) - {self.a_x})
         y_set = list(set([i for i in range(1, 6)]) - {self.a_y})
@@ -72,12 +73,11 @@ class SimpleTarget(Environment):
         return f_x, f_y
 
     def update_food(self):
-        if not self.food_reached:
-            pass
-        else:
+        if self.food_reached:
             self.board[self.food_y][self.food_x] = ' '
-            f_x, f_y = self.food_position()
-            self.board[f_y][f_x] = 'f'
+            self.food_x, self.food_y = self.food_position()
+            self.board[self.food_y][self.food_x] = 'f'
+            self.food_reached = False
 
     def tile_content(self, x, y):
         return self.board[y][x]
@@ -128,6 +128,7 @@ class SimpleTarget(Environment):
             else:
                 if reached:
                     new_state = 'x'
+                    self.food_reached = True
                 else:
                     new_state = '+'
         else:
@@ -185,6 +186,7 @@ class SimpleTarget(Environment):
             else:
                 if reached:
                     new_state = 'x'
+                    self.food_reached = True
                 else:
                     new_state = '+'
         else:
@@ -277,5 +279,7 @@ class SimpleTarget(Environment):
         result.append(self.right_eye_update_state())
 
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
+
+        self.update_food()
 
         return result
