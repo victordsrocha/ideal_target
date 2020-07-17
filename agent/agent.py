@@ -1,6 +1,6 @@
-from src.decider import Decider
-from src.enacter import Enacter
-from src.memory import Memory
+from agent.decider import Decider
+from agent.enacter import Enacter
+from agent.memory import Memory
 
 
 class Agent:

@@ -52,12 +52,29 @@ class Memory:
     def add_primitive_interaction(self, label):
         if label not in self.known_interactions.keys():
             interaction = self.add_or_get_interaction(label)
-            # interaction.valence = valence
+            interaction.valence = self.calc_valence(label)
         interaction = self.known_interactions[label]
         return interaction
 
     def get_primitive_interaction(self, label):
         return self.known_interactions[label]
+
+    def calc_valence(self, label):
+
+        # TODO criar um controle mais fácil para alterar
+        # valores de preferência sem precisar vir até aqui
+
+        sum_valence = 0
+        sum_valence += label.count('^') * 0
+        sum_valence += label.count('>') * 0
+        sum_valence += label.count('v') * 0
+        sum_valence += label.count('.') * 0
+        sum_valence += label.count('w') * (-5)
+        sum_valence += label.count('*') * 15
+        sum_valence += label.count('+') * 10
+        sum_valence += label.count('x') * 15
+        sum_valence += label.count('o') * (-15)
+        return sum_valence
 
     def init_simple_target(self):
 
