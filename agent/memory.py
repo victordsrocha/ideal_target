@@ -56,6 +56,9 @@ class Memory:
         interaction = self.known_interactions[label]
         return interaction
 
+    def get_primitive_interaction(self, label):
+        return self.known_interactions[label]
+
     def init_small_loop(self):
 
         turn_left = self.add_or_get_primitive_interaction('^t', -3)  # Left toward empty
