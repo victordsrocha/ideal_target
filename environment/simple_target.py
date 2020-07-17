@@ -45,9 +45,9 @@ class SimpleTarget(Environment):
         self.a_o = random.randint(0, 3)
         self.a_right_eye = ' '
         self.a_left_eye = ' '
-        self.a_distance_to_food = None
 
         # food
+        self.food_reached = True
         self.food_x, self.food_y = self.food_position()
 
         # board
@@ -71,10 +71,18 @@ class SimpleTarget(Environment):
         f_y = random.choice(y_set)
         return f_x, f_y
 
+    def update_food(self):
+        if not self.food_reached:
+            pass
+        else:
+            self.board[self.food_y][self.food_x] = ' '
+            f_x, f_y = self.food_position()
+            self.board[f_y][f_x] = 'f'
+
     def tile_content(self, x, y):
         return self.board[y][x]
 
-    def right_eye_new_state(self):
+    def right_eye_update_state(self):
         food = False
         reached = False
 
@@ -128,9 +136,10 @@ class SimpleTarget(Environment):
             else:
                 new_state = ' '
 
+        self.a_right_eye = new_state
         return new_state
 
-    def left_eye_new_state(self):
+    def left_eye_update_state(self):
         food = False
         reached = False
 
@@ -184,6 +193,7 @@ class SimpleTarget(Environment):
             else:
                 new_state = ' '
 
+        self.a_left_eye = new_state
         return new_state
 
     def right(self):
@@ -205,8 +215,8 @@ class SimpleTarget(Environment):
         else:
             result.append('.')
 
-        result.append(self.left_eye_new_state())
-        result.append(self.right_eye_new_state())
+        result.append(self.left_eye_update_state())
+        result.append(self.right_eye_update_state())
 
         # TODO pesquisar por forma mais prática de fazer list -> str
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
@@ -214,31 +224,58 @@ class SimpleTarget(Environment):
         return result
 
     def left(self):
+
         self.a_o -= 1
         if self.a_o < 0:
             self.a_o = self.ORIENTATION_LEFT
-        return '^t'
+
+        result = ['^']
+
+        if self.a_o == self.ORIENTATION_UP and self.a_y == 1:
+            result.append('w')
+        elif self.a_o == self.ORIENTATION_RIGHT and self.a_x == self.WIDTH - 2:
+            result.append('w')
+        elif self.a_o == self.ORIENTATION_DOWN and self.a_y == self.HEIGHT - 2:
+            result.append('w')
+        elif self.a_o == self.ORIENTATION_LEFT and self.a_x == 1:
+            result.append('w')
+        else:
+            result.append('.')
+
+        result.append(self.left_eye_update_state())
+        result.append(self.right_eye_update_state())
+
+        # TODO pesquisar por forma mais prática de fazer list -> str
+        result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
+
+        return result
 
     def move(self):
-        result = '>f'
+        result = ['>']
 
+        # add 'w' to label if bump to Wall
+        # else, add '.'
         if (self.a_o == self.ORIENTATION_UP) and (self.a_y > 0) and (
                 self.tile_content(self.a_x, self.a_y - 1) == ' '):
             self.a_y -= 1
-            result = '>t'
-
-        if (self.a_o == self.ORIENTATION_DOWN) and (self.a_y < self.HEIGHT) and (
+            result.append('.')
+        elif (self.a_o == self.ORIENTATION_DOWN) and (self.a_y < self.HEIGHT) and (
                 self.tile_content(self.a_x, self.a_y + 1) == ' '):
             self.a_y += 1
-            result = '>t'
-
-        if (self.a_o == self.ORIENTATION_RIGHT) and (self.a_x < self.WIDTH) and (
+            result.append('.')
+        elif (self.a_o == self.ORIENTATION_RIGHT) and (self.a_x < self.WIDTH) and (
                 self.board[self.a_y][self.a_x + 1] == ' '):
             self.a_x += 1
-            result = '>t'
-
-        if (self.a_o == self.ORIENTATION_LEFT) and (self.a_x > 0) and (self.board[self.a_y][self.a_x - 1] == ' '):
+            result.append('.')
+        elif (self.a_o == self.ORIENTATION_LEFT) and (self.a_x > 0) and (self.board[self.a_y][self.a_x - 1] == ' '):
             self.a_x -= 1
-            result = '>t'
+            result.append('.')
+        else:
+            result.append('w')
+
+        result.append(self.left_eye_update_state())
+        result.append(self.right_eye_update_state())
+
+        result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
         return result
