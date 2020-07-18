@@ -14,10 +14,22 @@ class Simulation:
         # self.last_state_list = agent.enacter.interface.env.last_state_list
 
         # TODO checar se faz sentido usar o convert_alpha
-        # Agent img
-        agent_img = pygame.image.load('simulation/images/ladybug.png')
-        self.agent_img = pygame.transform.scale(agent_img,
-                                                (int(0.8 * constants.BLOCK_WIDTH), int(0.8 * constants.BLOCK_HEIGHT)))
+        # Agent img standard
+        self.agent_img = pygame.image.load('simulation/images/ladybug.png')
+        self.agent_img = pygame.transform.scale(self.agent_img,
+                                                (int(1 * constants.BLOCK_WIDTH), int(1 * constants.BLOCK_HEIGHT)))
+        # Agent img right
+        self.agent_img_right = pygame.image.load('simulation/images/ladybug-right.png')
+        self.agent_img_right = pygame.transform.scale(self.agent_img_right,
+                                                      (int(1 * constants.BLOCK_WIDTH), int(1 * constants.BLOCK_HEIGHT)))
+        # Agent img left
+        self.agent_img_left = pygame.image.load('simulation/images/ladybug-left.png')
+        self.agent_img_left = pygame.transform.scale(self.agent_img_left,
+                                                     (int(1 * constants.BLOCK_WIDTH), int(1 * constants.BLOCK_HEIGHT)))
+        # Agent img both eyes
+        self.agent_img_both = pygame.image.load('simulation/images/ladybug-both.png')
+        self.agent_img_both = pygame.transform.scale(self.agent_img_both,
+                                                     (int(1 * constants.BLOCK_WIDTH), int(1 * constants.BLOCK_HEIGHT)))
 
         # food img
         food_img = pygame.image.load('simulation/images/leaf.png')
@@ -52,8 +64,8 @@ class Simulation:
         current = 0
         t = 0
         while True:
-            if t < 5000:
-                clock.tick(50000)
+            if t < 500:
+                clock.tick(500)
             else:
                 clock.tick(5)
             for event in pygame.event.get():
@@ -115,8 +127,19 @@ class Simulation:
 
         a_x = a_x * constants.BLOCK_WIDTH
         a_y = a_y * constants.BLOCK_HEIGHT
-        surface.blit(rot_center(self.agent_img, rot), (a_x, a_y))
-        surface.blit(self.food_img, (state.food_x * constants.BLOCK_WIDTH, state.food_y * constants.BLOCK_HEIGHT))
+
+        agent_img = self.agent_img
+        if state.a_left_eye == '+' or state.a_left_eye == '*' or state.a_left_eye == 'x':
+            if state.a_right_eye == '+' or state.a_right_eye == '*' or state.a_right_eye == 'x':
+                agent_img = self.agent_img_both
+            else:
+                agent_img = self.agent_img_left
+        elif state.a_right_eye == '+' or state.a_right_eye == '*' or state.a_right_eye == 'x':
+            agent_img = self.agent_img_right
+
+        surface.blit(rot_center(agent_img, rot), (a_x, a_y))
+        surface.blit(self.food_img,
+                     (state.food_x * constants.BLOCK_WIDTH + 5, state.food_y * constants.BLOCK_HEIGHT + 5))
 
     # criar update através da lista de state, a lista vai ser controlada no loop
 
