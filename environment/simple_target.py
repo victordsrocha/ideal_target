@@ -71,6 +71,9 @@ class SimpleTarget(Environment):
         self.food_reached = False
         self.food_x, self.food_y = self.food_position()
         self.board[self.food_y][self.food_x] = 'f'
+        self.time = 0
+        self.timeout_to_reach_food = 300
+        self.timeout_food = False
 
     def food_position(self):
         x_set = list(set([i for i in range(1, 11)]) - {self.a_x})
@@ -80,11 +83,16 @@ class SimpleTarget(Environment):
         return f_x, f_y
 
     def update_food(self):
-        if self.food_reached:
+        self.time += 1
+        if self.time > self.timeout_to_reach_food:
+            self.timeout_food = True
+        if self.food_reached or self.timeout_food:
             self.board[self.food_y][self.food_x] = ' '
             self.food_x, self.food_y = self.food_position()
             self.board[self.food_y][self.food_x] = 'f'
             self.food_reached = False
+            self.timeout_food = False
+            self.time = 0
 
     def tile_content(self, x, y):
         return self.board[y][x]
@@ -231,6 +239,7 @@ class SimpleTarget(Environment):
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
         self.save_state()
+        self.update_food()
         return result
 
     def left(self):
@@ -259,6 +268,7 @@ class SimpleTarget(Environment):
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
         self.save_state()
+        self.update_food()
         return result
 
     def move(self):
