@@ -64,7 +64,7 @@ class Simulation:
         current = 0
         t = 0
         while True:
-            if t < 500:
+            if t < 5000:
                 clock.tick(500)
             else:
                 clock.tick(5)

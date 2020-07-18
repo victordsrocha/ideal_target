@@ -10,7 +10,7 @@ class Memory:
         self.init_simple_target()
 
     def add_or_get_composite_interaction(self, pre_interaction, post_interaction):
-        label = '<' + pre_interaction.label + post_interaction.label + '>'
+        label = '(' + pre_interaction.label + post_interaction.label + ')'
 
         if label not in self.known_interactions.keys():
             interaction = self.add_or_get_interaction(label)
@@ -26,12 +26,12 @@ class Memory:
     def add_or_get_and_reinforce_composite_interaction(self, pre_interaction, post_interaction):
         composite_interaction = self.add_or_get_composite_interaction(pre_interaction, post_interaction)
         composite_interaction.weight += 1
-        '''
+
         if composite_interaction.weight == 1:
             print(f'learn {composite_interaction}')
         else:
             print(f'reinforce {composite_interaction}')
-        '''
+
         return composite_interaction
 
     # somente por questão de controle todas as criações de novas interações passam por aqui
@@ -41,7 +41,7 @@ class Memory:
         return self.known_interactions[label]
 
     def add_or_get_abstract_experiment(self, interaction):
-        label = interaction.label.replace('e', 'E').replace('r', 'R').replace('>', '|')
+        label = interaction.label.replace('e', 'E').replace('r', 'R').replace(')', '|')
         if label not in self.known_experiments:
             abstract_experiment = Experiment(label)
             abstract_experiment.intended_interaction = interaction
@@ -65,14 +65,14 @@ class Memory:
         # valores de preferência sem precisar vir até aqui
 
         sum_valence = 0
-        sum_valence += label.count('^') * 0
+        sum_valence += label.count('^') * (-2)
         sum_valence += label.count('>') * (-1)
-        sum_valence += label.count('v') * 0
-        sum_valence += label.count('.') * 0
-        sum_valence += label.count('-') * 0
-        sum_valence += label.count('*') * 15
-        sum_valence += label.count('+') * 10
-        sum_valence += label.count('x') * 15
+        sum_valence += label.count('v') * (-2)
+        sum_valence += label.count('.') * (+0)
+        sum_valence += label.count('-') * (+0)
+        sum_valence += label.count('*') * (+10)
+        sum_valence += label.count('+') * (+15)
+        sum_valence += label.count('x') * (+50)
         sum_valence += label.count('o') * (-15)
 
         if label[0] == '>':

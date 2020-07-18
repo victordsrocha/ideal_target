@@ -7,7 +7,7 @@ class Interface(object):
         self.env = SimpleTarget()
         self.memory = memory
 
-    def enact(self, intended_interaction, step_actions_list):
+    def enact(self, intended_interaction):
         """
         recebe somente interações primitivas
         esta função deve "tentar" executar a interação intencionada no ambiente
@@ -32,7 +32,6 @@ class Interface(object):
 
         enacted_interaction = self.memory.get_primitive_interaction(result)
 
-        # print(enacted_interaction)
-        # step_actions_list.append((enacted_interaction.label, self.m_x, self.m_y, self.m_o))
+        print(f'primitive enacted interaction: {enacted_interaction}')
         # print(f'Posicao atual = {self.m_x},{self.m_y},{self.m_o}')
         return enacted_interaction

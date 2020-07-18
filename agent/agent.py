@@ -6,7 +6,6 @@ from agent.memory import Memory
 class Agent:
 
     def __init__(self):
-        self.step_actions_list = []
         self.memory = Memory()
         self.decider = Decider(self.memory)
         self.enacter = Enacter(self.memory)
@@ -21,7 +20,7 @@ class Agent:
     def try_enact_intended_interaction_and_learn(self):
         intended_interaction, experiment = self.get_intended_interaction()
 
-        enacted_interaction = self.enacter.enact(intended_interaction, self.step_actions_list)
+        enacted_interaction = self.enacter.enact(intended_interaction)
         if enacted_interaction != intended_interaction:
             experiment.enacted_interactions.add(enacted_interaction)
 
@@ -36,8 +35,7 @@ class Agent:
             self.mood = 'PAINED'
 
     def step(self):
-        # self.step_actions_list = []
-        self.get_intended_interaction()
+        # self.get_intended_interaction()
         self.try_enact_intended_interaction_and_learn()
         self.set_mood()
 

@@ -37,11 +37,9 @@ class Decider:
             activated_interactions_ = []
             for know_interaction in self.memory.known_interactions.values():
                 if not know_interaction.is_primitive():
-                    # Talvez nao seja possivel usar somente a busca por objeto aqui
-                    # talvez seja necessario usar a label
                     if know_interaction.pre_interaction in context_interactions:
                         activated_interactions_.append(know_interaction)
-                        # print(f'activated {know_interaction}')
+                        print(f'activated {know_interaction}')
             return activated_interactions_
 
         anticipations = []
@@ -106,10 +104,9 @@ class Decider:
 
         if len(anticipations) > 0:
             anticipations.sort(key=lambda x: x.proclivity, reverse=True)
-            '''
+
             for e in anticipations:
                 print(f'propose {e}')
-            '''
 
             selected_anticipation = anticipations[0]
             if selected_anticipation.proclivity >= 0:
