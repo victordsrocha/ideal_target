@@ -1,15 +1,15 @@
 """
 Symbols Actuators Sensors Description Intrinsic  satisfaction
- ^    (^) Turn left True Turn 90Â° left toward adjacent empty square 0    (indifferent)
-      [^] False Turn 90Â° left toward adjacent wall -5   (dislike)
- >    (>) Forward True Move forward 0     (indifferent)
-      [>] False Bump wall -8   (dislike)
- v    (v) Turn right True Turn 90Â° right toward adjacent empty square 0     (indifferent)
-      [v] False Turn 90Â° right toward adjacent wall -5    (dislike)
-      * Appear Target appears in distal sensor field 15   (love)
-      + Closer Target approaches in distal sensor field 10   (enjoy)
-      x Reached Target reached according to distal sensor 15   (love)
-      o  Disappear Target disappears from distal sensor field -15  (hate)
+ ^    (^) Turn left True Turn 90Â° left toward adjacent empty square 0
+      [^] False Turn 90Â° left toward adjacent wall -5
+ >    (>) Forward True Move forward -1
+      [>] False Bump wall -8
+ v    (v) Turn right True Turn 90Â° right toward adjacent empty square 0
+      [v] False Turn 90Â° right toward adjacent wall -5
+      * Appear Target appears in distal sensor field 15
+      + Closer Target approaches in distal sensor field 10
+      x Reached Target reached according to distal sensor 15
+      o  Disappear Target disappears from distal sensor field -15
 
 a interação primitiva vai ser identifacada com 4 caracteres:
 
@@ -27,8 +27,9 @@ para identificar o estado atual de cada olho
 
 """
 
-import random
+from environment.state import State
 from environment.environment import Environment
+import random
 
 
 class SimpleTarget(Environment):
@@ -40,24 +41,30 @@ class SimpleTarget(Environment):
         self.ORIENTATION_LEFT = 3
 
         # acho que seria mais interessante as coords do agente ficarem em interface
-        self.a_x = random.randint(1, 6)
-        self.a_y = random.randint(1, 6)
+        self.a_x = random.randint(1, 11)
+        self.a_y = random.randint(1, 9)
         self.a_o = random.randint(0, 3)
-        self.a_right_eye = ' '
-        self.a_left_eye = ' '
+        self.a_right_eye = '-'
+        self.a_left_eye = '-'
+
+        # estrutura para salvar os últimos passos e ser acessado por simularion
+        self.last_state_list = []
 
         # board
-        self.WIDTH = 8
-        self.HEIGHT = 8
+        self.WIDTH = 13
+        self.HEIGHT = 11
         self.board = [
-            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
-            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
+            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', 'x'],
+            ['x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x', 'x']
         ]
 
         # food
@@ -66,8 +73,8 @@ class SimpleTarget(Environment):
         self.board[self.food_y][self.food_x] = 'f'
 
     def food_position(self):
-        x_set = list(set([i for i in range(1, 6)]) - {self.a_x})
-        y_set = list(set([i for i in range(1, 6)]) - {self.a_y})
+        x_set = list(set([i for i in range(1, 11)]) - {self.a_x})
+        y_set = list(set([i for i in range(1, 9)]) - {self.a_y})
         f_x = random.choice(x_set)
         f_y = random.choice(y_set)
         return f_x, f_y
@@ -123,7 +130,7 @@ class SimpleTarget(Environment):
                         break
 
         if food:
-            if self.a_right_eye == ' ' or self.a_right_eye == 'o':
+            if self.a_right_eye == '-' or self.a_right_eye == 'o':
                 new_state = '*'
             else:
                 if reached:
@@ -181,7 +188,7 @@ class SimpleTarget(Environment):
                         break
 
         if food:
-            if self.a_right_eye == ' ' or self.a_right_eye == 'o':
+            if self.a_right_eye == '-' or self.a_right_eye == 'o':
                 new_state = '*'
             else:
                 if reached:
@@ -223,6 +230,7 @@ class SimpleTarget(Environment):
         # TODO pesquisar por forma mais prática de fazer list -> str
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
+        self.save_state()
         return result
 
     def left(self):
@@ -250,6 +258,7 @@ class SimpleTarget(Environment):
         # TODO pesquisar por forma mais prática de fazer list -> str
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
+        self.save_state()
         return result
 
     def move(self):
@@ -258,18 +267,21 @@ class SimpleTarget(Environment):
         # add 'w' to label if bump to Wall
         # else, add '.'
         if (self.a_o == self.ORIENTATION_UP) and (self.a_y > 0) and (
-                self.tile_content(self.a_x, self.a_y - 1) == ' '):
+                (self.tile_content(self.a_x, self.a_y - 1) == ' ') or (
+                self.tile_content(self.a_x, self.a_y - 1) == 'f')):
             self.a_y -= 1
             result.append('.')
         elif (self.a_o == self.ORIENTATION_DOWN) and (self.a_y < self.HEIGHT) and (
-                self.tile_content(self.a_x, self.a_y + 1) == ' '):
+                (self.tile_content(self.a_x, self.a_y + 1) == ' ') or (
+                self.tile_content(self.a_x, self.a_y + 1) == 'f')):
             self.a_y += 1
             result.append('.')
         elif (self.a_o == self.ORIENTATION_RIGHT) and (self.a_x < self.WIDTH) and (
-                self.board[self.a_y][self.a_x + 1] == ' '):
+                (self.board[self.a_y][self.a_x + 1] == ' ') or (self.board[self.a_y][self.a_x + 1] == 'f')):
             self.a_x += 1
             result.append('.')
-        elif (self.a_o == self.ORIENTATION_LEFT) and (self.a_x > 0) and (self.board[self.a_y][self.a_x - 1] == ' '):
+        elif (self.a_o == self.ORIENTATION_LEFT) and (self.a_x > 0) and (
+                (self.board[self.a_y][self.a_x - 1] == ' ') or (self.board[self.a_y][self.a_x - 1] == 'f')):
             self.a_x -= 1
             result.append('.')
         else:
@@ -281,5 +293,18 @@ class SimpleTarget(Environment):
         result = str(result)[1:-1].replace("'", '').replace(',', '').replace(' ', '')
 
         self.update_food()
-
+        self.save_state()
         return result
+
+    def save_state(self):
+        last_action = State(
+            self.a_x,
+            self.a_y,
+            self.a_o,
+            self.a_right_eye,
+            self.a_left_eye,
+            self.food_x,
+            self.food_y,
+            self.food_reached
+        )
+        self.last_state_list.append(last_action)

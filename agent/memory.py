@@ -65,16 +65,21 @@ class Memory:
         # valores de preferência sem precisar vir até aqui
 
         sum_valence = 0
-        sum_valence += label.count('^') * 0
-        sum_valence += label.count('>') * 0
-        sum_valence += label.count('v') * 0
+        sum_valence += label.count('^') * -15
+        sum_valence += label.count('>') * (-1)
+        sum_valence += label.count('v') * -15
         sum_valence += label.count('.') * 0
-        sum_valence += label.count('w') * (-5)
         sum_valence += label.count('-') * 0
         sum_valence += label.count('*') * 15
         sum_valence += label.count('+') * 10
-        sum_valence += label.count('x') * 15
+        sum_valence += label.count('x') * 100
         sum_valence += label.count('o') * (-15)
+
+        if label[0] == '>':
+            sum_valence += label.count('w') * (-8)
+        else:
+            sum_valence += label.count('w') * (-5)
+
         return sum_valence
 
     def init_simple_target(self):

@@ -25,7 +25,7 @@ class Agent:
         if enacted_interaction != intended_interaction:
             experiment.enacted_interactions.add(enacted_interaction)
 
-        # print(f'Enacted {enacted_interaction}')
+        print(f'Enacted {enacted_interaction}')
         self.decider.learn_composite_interaction(enacted_interaction)
         self.decider.enacted_interaction = enacted_interaction
 
@@ -36,7 +36,7 @@ class Agent:
             self.mood = 'PAINED'
 
     def step(self):
-        self.step_actions_list = []
+        # self.step_actions_list = []
         self.get_intended_interaction()
         self.try_enact_intended_interaction_and_learn()
         self.set_mood()

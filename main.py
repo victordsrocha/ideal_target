@@ -1,6 +1,8 @@
+from simulation.simulation import Simulation
 from agent.agent import Agent
 
 agent = Agent()
 
-for i in range(100):
-    agent.step()
+simulation = Simulation(agent)
+
+simulation.run(10)
